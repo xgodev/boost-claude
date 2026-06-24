@@ -1,0 +1,8 @@
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Local Claude Code config (untracked) — but keep versioned internal project skills
+.claude/*
+!.claude/skills/
