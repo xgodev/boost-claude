@@ -82,8 +82,8 @@ resolves.
 
 This plugin co-evolves with the boost framework but lives in a separate repo.
 See [`CLAUDE.md`](./CLAUDE.md) for the sync rule: whenever a boost component
-changes in `xgodev/boost`, the matching `boost-*` skill must be updated here in
-a corresponding PR, with a `plugin.json` version bump.
+changes in `xgodev/boost`, the matching reference file (under `skills/boost/references/`)
+must be updated here in a corresponding PR, with a `plugin.json` version bump.
 
 ## License
 
