@@ -7,10 +7,13 @@ in [`xgodev/boost`](https://github.com/xgodev/boost).
 ```
 .claude-plugin/
   plugin.json        # golang-boost manifest + quality-gate dependency
-  marketplace.json   # marketplace "xgodev-boost", source "./"
 skills/
   boost/              # entry skill: grouped index (SKILL.md) + references/*.md, factory split by domain
 ```
+
+Este repo NÃO é um marketplace: a distribuição é feita pelo marketplace
+central `xgodev-plugins` (repo [`xgodev/claude-plugin`](https://github.com/xgodev/claude-plugin)),
+que lista este plugin com source GitHub `xgodev/boost-claude`.
 
 ## Iron Laws — NUNCA violar
 
@@ -25,20 +28,26 @@ skills/
    o PR aqui, a doc fica defasada. (Antes do split, isso era um PR único no
    boost; agora são dois repos — a disciplina substitui o acoplamento.)
 3. **Bump de versão a cada mudança de conteúdo.** Mudou qualquer `SKILL.md` ou
-   manifest → subir `version` em `.claude-plugin/plugin.json` **e** a `version`
-   do plugin em `.claude-plugin/marketplace.json`. Sem bump, o auto-update não
-   reconhece a mudança.
-4. **Nomes são contrato.** `name` do plugin (`golang-boost`) e `name` do
-   marketplace (`xgodev-boost`) não mudam sem migração documentada — quebram
-   `/plugin install` e referências externas (umbrella `xgodev/claude-plugin`).
-5. **`source: "./"`** no `marketplace.json` — a raiz deste repo é o plugin.
+   manifest → subir `version` em `.claude-plugin/plugin.json`. Sem bump, o
+   auto-update não reconhece a mudança. (O marketplace central não pina
+   `version` deste plugin — o `plugin.json` daqui é a fonte.)
+4. **Nomes são contrato.** `name` do plugin (`golang-boost`) não muda sem
+   migração documentada — quebra `/plugin install` e a entrada no marketplace
+   central `xgodev-plugins` (repo `xgodev/claude-plugin`).
+5. **Sem `marketplace.json` aqui.** A raiz deste repo é o plugin; quem o lista
+   é o `marketplace.json` do `xgodev/claude-plugin` (source GitHub
+   `xgodev/boost-claude`). Não recriar o marketplace `xgodev-boost`
+   (aposentado no 0.16.0).
+6. **Zero referências proprietárias/internas.** Nada de nome de empresa,
+   host ou repo interno em manifests, keywords, skills ou docs.
 
 ### Red flags — PARAR e reportar
 
 - Componente do boost alterado sem o `references/*.md` correspondente atualizado aqui, ou sem entrada no índice de `skills/boost/SKILL.md`
 - Mudança de skill/manifest sem bump de versão
 - `SKILL.md` referenciando caminho de arquivo local em vez de import path Go
-- Rename de `golang-boost` / `xgodev-boost` sem nota de migração
+- Rename de `golang-boost` sem nota de migração; reaparecimento de um
+  `marketplace.json` neste repo
 
 ## Editar/criar skills
 
@@ -55,16 +64,17 @@ cross-reference entre skills (carrega só o necessário).
 ## Distribuição
 
 ```
-/plugin marketplace add xgodev/boost-claude
-/plugin install golang-boost@xgodev-boost
+/plugin marketplace add xgodev/claude-plugin
+/plugin install golang-boost@xgodev-plugins
 ```
 
-Dependência puxada automaticamente: `quality-gate@xgodev-quality-gate`
-(pré-requisito: `/plugin marketplace add xgodev/quality-gate` antes do install).
+Dependência `quality-gate` puxada automaticamente: vive no mesmo marketplace
+`xgodev-plugins`, então resolve sem passo extra.
 
-O umbrella `xgodev/claude-plugin` (marketplace `xgodev`) re-lista este plugin
-como `boost@xgodev` — ao mover o repo, o `source` lá precisa apontar para
-`xgodev/boost-claude`. Esse ajuste é em outro repo, fora daqui.
+O marketplace central vive em `xgodev/claude-plugin`
+(`.claude-plugin/marketplace.json`, name `xgodev-plugins`) e lista este plugin
+com source GitHub `xgodev/boost-claude`. Mudança estrutural aqui (rename de
+plugin, novo plugin) exige ajuste correspondente lá — é outro repo, fora daqui.
 
 ## Regras gerais
 

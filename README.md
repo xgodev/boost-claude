@@ -13,42 +13,43 @@ every deeper file loads on demand only when the question actually needs it.
 
 ## Install
 
-```
-/plugin marketplace add xgodev/boost-claude
-/plugin install golang-boost@xgodev-boost
-```
+`golang-boost` is distributed through the single `xgodev-plugins` marketplace,
+hosted in [`xgodev/claude-plugin`](https://github.com/xgodev/claude-plugin) —
+this repo is the plugin source the marketplace points at:
 
-The marketplace is named `xgodev-boost` and the plugin is `golang-boost` — only
-the `marketplace add` URL points here.
+```
+/plugin marketplace add xgodev/claude-plugin
+/plugin install golang-boost@xgodev-plugins
+```
 
 ### Dependency
 
-`golang-boost` depends on `quality-gate@xgodev-quality-gate` (pre-push
-comparative gate). Add its marketplace first, otherwise the install resolves
-the dependency as unsatisfied and disables the plugin:
+`golang-boost` depends on `quality-gate` (pre-push comparative gate). It lives
+in the same `xgodev-plugins` marketplace, so the install resolves it
+automatically — no extra step.
 
-```
-/plugin marketplace add xgodev/quality-gate
-```
+## Migrating from the `xgodev-boost` marketplace
 
-## Migrating from `xgodev/boost`
-
-The plugin used to be distributed from the `xgodev/boost` repository itself.
-If you installed it the old way, remove it and re-add from here:
+Until plugin 0.15.0 this repo was its own marketplace (`xgodev-boost`), and
+before that the plugin shipped from `xgodev/boost` itself. Both are retired in
+favor of the single `xgodev-plugins` marketplace. If you installed either old
+way, remove and re-add:
 
 ```
 /plugin uninstall golang-boost@xgodev-boost
 /plugin marketplace remove xgodev-boost
-/plugin marketplace add xgodev/boost-claude
-/plugin install golang-boost@xgodev-boost
+/plugin marketplace remove xgodev-quality-gate
+/plugin marketplace add xgodev/claude-plugin
+/plugin install golang-boost@xgodev-plugins
 ```
+
+(Skip any `marketplace remove` for a marketplace you never added.)
 
 ## What's inside
 
 ```
 .claude-plugin/
   plugin.json                # golang-boost manifest + quality-gate dependency
-  marketplace.json           # marketplace "xgodev-boost", source "./"
 skills/
   boost/
     SKILL.md                 # entry skill: 8 top-level contexts, ~25 lines
