@@ -41,6 +41,23 @@ Standard knobs registered automatically:
 
 Application-specific extras (auth header, client ID, etc.) typically live in your own service config, not `boost.factory.resty.*` — pass them explicitly to your client constructor.
 
+## Observability plugins
+
+The constructors also accept `plugins ...Plugin` — if the service uses one of these vendors, add the matching plugin here instead of hand-instrumenting each call site:
+
+| Vendor | Import | Usage |
+|---|---|---|
+| Datadog | `.../factory/contrib/go-resty/resty/v2/plugins/contrib/datadog/dd-trace-go/v1` | `resty.NewClientWithConfigPath(ctx, path, dd.NewDatadog(opts...).Register)` |
+| OpenTelemetry | `.../factory/contrib/go-resty/resty/v2/plugins/contrib/dubonzi/otelresty/v1` | `..., otel.NewOtelresty(opts...).Register)` |
+| Prometheus | `.../factory/contrib/go-resty/resty/v2/plugins/contrib/prometheus/client_golang/v1` | `..., prom.NewPrometheusWithOptions(opts).Register)` |
+
+## Other plugins
+
+| Plugin | Import | Usage | What it does |
+|---|---|---|---|
+| Request ID | `.../factory/contrib/go-resty/resty/v2/plugins/extra/requestid` | `resty.NewClientWithConfigPath(ctx, path, reqid.NewRequestID().Register)` | Injects `X-Request-ID` into every outbound request |
+| Retry | `.../factory/contrib/go-resty/resty/v2/plugins/extra/retry` | `..., retry.NewRetry().Register)` | Exponential backoff retry on 429/5xx/timeout |
+
 ## Red flags
 
 | Red flag | Fix |

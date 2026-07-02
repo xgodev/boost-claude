@@ -10,6 +10,8 @@ allowed-tools: Read Edit Write Glob Grep Bash(go:*) Bash(golangci-lint:*) Bash(g
 
 Index for `github.com/xgodev/boost`. Read the matching context row below, then the leaf reference it points to, before answering. Paths are relative to this skill's directory (`skills/boost/`). Follow any `REQUIRED BACKGROUND` pointer inside a leaf file too.
 
+When wiring or configuring any factory, read that factory's own "Plugins" section too — most accept more than the default/required set shown in the main example (JSON codecs, compression, retry, profiling, docs UI, circuit breakers, observability, …). If the task specifically names OpenTelemetry, Datadog, or Prometheus, or asks for tracing/metrics, also read `references/plugins.md` — that vendor coverage is per-component, not automatic; activating it for one library doesn't activate it for the rest of the stack.
+
 | Context | Reference |
 |---|---|
 | Boot sequence (`boost.Start()`) | `references/start.md` |
@@ -21,3 +23,4 @@ Index for `github.com/xgodev/boost`. Read the matching context row below, then t
 | Extra (health/middleware/multiserver) | `references/extra.md` |
 | fx modules | `references/fx.md` |
 | Factory (`factory/contrib/*`, every integration) | `references/factory.md` |
+| Observability vendor coverage matrix (OTel/Datadog/Prometheus, which component has which) | `references/plugins.md` |

@@ -33,6 +33,22 @@ the code through `model/errors.Classify` (`NotFound`→`codes.NotFound`,
 `nil`/OK), register it at boot — see `references/model-errors.md`
 (`Register`/`RegisterMatch`/`Ignore`). Don't edit `server.Error` by hand.
 
+## Observability plugins
+
+Both client and server constructors accept `plugins ...Plugin` — the vendor coverage differs between them:
+
+| Vendor | Client | Server |
+|---|---|---|
+| Datadog | `.../client/plugins/contrib/datadog/dd-trace-go/v1` → `client.NewClientConn(ctx, datadog.NewDatadog(opts...).Register)` | `.../server/plugins/contrib/datadog/dd-trace-go/v1` → `server.NewServer(ctx, datadog.NewDatadog(opts...).Register)` |
+| Prometheus | `.../client/plugins/contrib/prometheus/client_golang/v1` → `..., prometheus.NewPrometheus().Register)` | `.../server/plugins/contrib/prometheus/client_golang/v1` → `..., prometheus.NewPrometheus().Register)` |
+| OpenTelemetry | `.../client/plugins/contrib/go.opentelemetry.io/contrib/v0` → `..., contrib.NewOpenTelemetry().Register)` | **not available** — no otel plugin ships for the gRPC server side |
+
+## Other plugins
+
+| Plugin | Client | Server | What it does |
+|---|---|---|---|
+| Compressor | `.../client/plugins/native/compressor` → `client.NewClientConnWithOptions(ctx, opts, compressor.NewCompressor().Register)` | `.../server/plugins/native/compressor` → `server.NewServerWithOptions(ctx, opts, compressor.NewCompressor().Register)` | Enables gzip compression for gRPC payloads |
+
 ## Red flags
 
 | Red flag | Fix |

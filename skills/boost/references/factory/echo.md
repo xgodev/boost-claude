@@ -85,6 +85,41 @@ srv.Shutdown(shutdownCtx) // bounded drain with FRESH ctx
 
 Use a fresh context for `Shutdown` — passing the cancelled parent makes it return immediately.
 
+## Observability plugins
+
+`echoserver.NewServer(ctx, plugins ...Plugin)` also accepts vendor plugins — if the service uses one of these vendors, add the matching plugin here, not a hand-rolled Echo middleware:
+
+| Vendor | Import | Usage |
+|---|---|---|
+| Datadog | `.../factory/contrib/labstack/echo/v4/plugins/contrib/datadog/dd-trace-go/v1` | `echoserver.NewServer(ctx, ..., datadog.Register)` (or `datadog.NewDatadog(opts...).Register`) |
+| OpenTelemetry | `.../factory/contrib/labstack/echo/v4/plugins/contrib/go.opentelemetry.io/contrib/v0` | `echoserver.NewServer(ctx, ..., otelecho.Register)` (or `NewOtelEcho(opts...).Register`) |
+| Prometheus | `.../factory/contrib/labstack/echo/v4/plugins/contrib/prometheus/client_golang/v1` | `echoserver.NewServer(ctx, ..., prometheus.Register)` (or `NewPrometheus().Register`) |
+
+## Other plugins
+
+Every plugin below follows the same 3-constructor shape (`New<X>()`, `New<X>WithOptions(options)`, `New<X>WithConfigPath(path)`) and a `Register(ctx, server) error` passed to `NewServer`, same as the required set above and the observability table:
+
+| Plugin | Import | What it does |
+|---|---|---|
+| Body dump | `.../factory/contrib/labstack/echo/v4/plugins/native/bodydump` | Logs full request/response bodies — dev/debug only |
+| Body limit | `.../factory/contrib/labstack/echo/v4/plugins/native/bodylimit` | Caps max request body size |
+| CORS | `.../factory/contrib/labstack/echo/v4/plugins/native/cors` | Cross-origin config for browser clients |
+| Gzip | `.../factory/contrib/labstack/echo/v4/plugins/native/gzip` | Compresses responses |
+| Sonic JSON | `.../factory/contrib/labstack/echo/v4/plugins/contrib/bytedance/sonic/v1` | Swaps the default JSON encoder/decoder for ByteDance Sonic (faster) |
+| goccy/go-json | `.../factory/contrib/labstack/echo/v4/plugins/contrib/goccy/go-json/v0` | Swaps the default JSON encoder/decoder for goccy/go-json (alternative to Sonic — don't wire both) |
+| pprof | `.../factory/contrib/labstack/echo/v4/plugins/contrib/hiko1129/echo-pprof/v1` | Exposes Go pprof profiling endpoints — not for production internet-facing servers |
+| Swagger UI | `.../factory/contrib/labstack/echo/v4/plugins/contrib/swaggo/echo-swagger/v1` | Serves interactive OpenAPI docs |
+| Semaphore | `.../factory/contrib/labstack/echo/v4/plugins/extra/semaphore` | Weighted concurrency limit on request processing |
+
+```go
+srv, err := echoserver.NewServer(ctx,
+    recoverplugin.Register, requestid.Register, logplugin.Register,
+    restresponse.Register, error_handler.Register, // required set
+    gzip.Register, cors.Register,                  // as needed
+    sonicjson.Register,                             // pick ONE json codec swap, not both
+)
+```
+
 ## Custom error → status, or ignore
 
 The handler resolves status via `model/errors.Classify`. To make a non-boost
