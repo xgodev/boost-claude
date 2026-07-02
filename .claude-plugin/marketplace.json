@@ -6,15 +6,15 @@
   },
   "metadata": {
     "description": "Claude Code plugins for github.com/xgodev/boost, shipped from the github.com/xgodev/boost-claude repository.",
-    "version": "1.3.0"
+    "version": "1.4.0"
   },
   "allowCrossMarketplaceDependenciesOn": ["xgodev-quality-gate"],
   "plugins": [
     {
       "name": "golang-boost",
       "source": "./",
-      "description": "Component-aligned skill bundle for github.com/xgodev/boost — 58 skills, one per boost component, cross-referenced via REQUIRED BACKGROUND so Claude loads only what the current task needs. Covers every factory contrib, every wrapper, every bootstrap component, plus a maintainer guide. Pulls in xgodev/quality-gate for the pre-push comparative gate as a dependency.",
-      "version": "0.10.0",
+      "description": "Single-entry, progressive-disclosure skill for github.com/xgodev/boost — one flat index (skills/boost/SKILL.md) one hop away from references/*.md per component, plus a standalone gqlgen-field-resolvers skill. Only the index description loads at session start. Pulls in xgodev/quality-gate for the pre-push comparative gate as a dependency.",
+      "version": "0.11.0",
       "category": "language-go",
       "tags": ["go", "golang", "boost", "echo", "resty", "pubsub", "cloudevents", "nats", "kafka", "mongo", "cassandra", "redis", "elasticsearch", "aws", "grpc", "fx", "otel", "datadog", "prometheus", "k8s"]
     }

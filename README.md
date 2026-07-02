@@ -1,9 +1,11 @@
 # boost-claude
 
 Claude Code plugin distribution for **[github.com/xgodev/boost](https://github.com/xgodev/boost)** —
-the modular Go service framework. This repo ships the `golang-boost` plugin: one
-skill per boost component (58 total), so Claude loads only what the current task
-needs.
+the modular Go service framework. This repo ships the `golang-boost` plugin: a
+single `boost` entry skill with a flat, one-hop index into `references/*.md`
+(one file per component), plus a standalone `gqlgen-field-resolvers` skill. Only
+the entry skill's description loads at session start — every component's detail
+loads on demand when Claude reads the matching reference file.
 
 > The plugin documents `boost`, but it is **distributed from here**. The boost
 > source code lives in [`xgodev/boost`](https://github.com/xgodev/boost); this
@@ -45,28 +47,43 @@ If you installed it the old way, remove it and re-add from here:
 
 ```
 .claude-plugin/
-  plugin.json        # golang-boost manifest + quality-gate dependency
-  marketplace.json   # marketplace "xgodev-boost", source "./"
-skills/              # 58 skills: boost-* (one per component) + gqlgen-field-resolvers
+  plugin.json                # golang-boost manifest + quality-gate dependency
+  marketplace.json           # marketplace "xgodev-boost", source "./"
+skills/
+  boost/
+    SKILL.md                 # entry skill: flat index, one hop to every reference
+    references/
+      start.md, model-errors.md, CONTRIBUTING.md
+      wrapper/{cache,config,log,log-backends,publisher}.md
+      bootstrap/{function,middleware,adapter-kafka,adapter-nats,adapter-pubsub}.md
+      extra/{health,middleware,multiserver}.md
+      fx/{modules,pluggable-datastore}.md
+      factory/{ants,aws,...,zerolog}.md   # one per factory/contrib/ component
+  gqlgen-field-resolvers/    # standalone, unrelated to boost
 ```
 
-Skill families:
+Reference groups (each row in `skills/boost/SKILL.md`'s index links directly to
+one of these — no intermediate category index files):
 
-- `boost-start` — boot sequence (`boost.Start()`).
-- `boost-wrapper-*` — log, config, cache, publisher.
-- `boost-model-errors` — typed error catalog.
-- `boost-factory-*` — one per `factory/contrib/` component (Echo, Resty,
+- `references/start.md` — boot sequence (`boost.Start()`).
+- `references/wrapper/*` — log, config, cache, publisher.
+- `references/model-errors.md` — typed error catalog.
+- `references/factory/*` — one per `factory/contrib/` component (Echo, Resty,
   Pub/Sub, Mongo, Cassandra, Redis, Elasticsearch, Kafka, AWS, gRPC, OTel, …).
-- `boost-bootstrap-*`, `boost-extra-*`, `boost-fx-*` — bootstrap adapters,
-  extra middleware/health/multiserver, fx modules.
-- `boost-maintainer` — guide for contributing to boost itself.
+- `references/bootstrap/*`, `references/extra/*`, `references/fx/*` —
+  bootstrap adapters, extra middleware/health/multiserver, fx modules.
+- `references/CONTRIBUTING.md` — guide for contributing to boost itself.
+
+Run `python3 scripts/verify_references.py` after editing any reference file —
+it confirms every `references/....md` pointer in `skills/boost/` still
+resolves.
 
 ## Maintenance
 
 This plugin co-evolves with the boost framework but lives in a separate repo.
 See [`CLAUDE.md`](./CLAUDE.md) for the sync rule: whenever a boost component
-changes in `xgodev/boost`, the matching `boost-*` skill must be updated here in
-a corresponding PR, with a `plugin.json` version bump.
+changes in `xgodev/boost`, the matching reference file (under `skills/boost/references/`)
+must be updated here in a corresponding PR, with a `plugin.json` version bump.
 
 ## License
 

@@ -8,7 +8,9 @@ in [`xgodev/boost`](https://github.com/xgodev/boost).
 .claude-plugin/
   plugin.json        # golang-boost manifest + quality-gate dependency
   marketplace.json   # marketplace "xgodev-boost", source "./"
-skills/              # 58 skills (boost-* + gqlgen-field-resolvers)
+skills/
+  boost/              # entry skill: flat index (SKILL.md) + references/*.md per component
+  gqlgen-field-resolvers/
 ```
 
 ## Iron Laws — NUNCA violar
@@ -18,10 +20,11 @@ skills/              # 58 skills (boost-* + gqlgen-field-resolvers)
    caminho de arquivo deste repo. Não dependa de ter o source do boost ao lado.
 2. **Sync com o boost é manual e obrigatório.** Mudou um componente em
    `xgodev/boost` (`factory/`, `wrapper/`, `bootstrap/`, `extra/`, `fx/`,
-   `model/errors`) → abrir PR **aqui** atualizando a skill `boost-*`
-   correspondente. Componente novo no boost → skill nova aqui. Sem o PR aqui, a
-   doc fica defasada. (Antes do split, isso era um PR único no boost; agora são
-   dois repos — a disciplina substitui o acoplamento.)
+   `model/errors`) → abrir PR **aqui** atualizando o `references/<grupo>/<nome>.md`
+   correspondente em `skills/boost/references/`. Componente novo no boost →
+   reference novo aqui, mais uma linha no índice de `skills/boost/SKILL.md`. Sem
+   o PR aqui, a doc fica defasada. (Antes do split, isso era um PR único no
+   boost; agora são dois repos — a disciplina substitui o acoplamento.)
 3. **Bump de versão a cada mudança de conteúdo.** Mudou qualquer `SKILL.md` ou
    manifest → subir `version` em `.claude-plugin/plugin.json` **e** a `version`
    do plugin em `.claude-plugin/marketplace.json`. Sem bump, o auto-update não
@@ -33,7 +36,7 @@ skills/              # 58 skills (boost-* + gqlgen-field-resolvers)
 
 ### Red flags — PARAR e reportar
 
-- Componente do boost alterado sem a skill `boost-*` correspondente atualizada aqui
+- Componente do boost alterado sem o `references/*.md` correspondente atualizado aqui, ou sem entrada no índice de `skills/boost/SKILL.md`
 - Mudança de skill/manifest sem bump de versão
 - `SKILL.md` referenciando caminho de arquivo local em vez de import path Go
 - Rename de `golang-boost` / `xgodev-boost` sem nota de migração
@@ -42,8 +45,9 @@ skills/              # 58 skills (boost-* + gqlgen-field-resolvers)
 
 Autorar ou editar **qualquer** `SKILL.md` é um gate: usar a skill
 `superpowers:writing-skills` (TDD de skill — baseline com subagent ANTES) antes
-de escrever a primeira linha. Para o padrão de criar skill nova de componente,
-ver `skills/boost-maintainer/SKILL.md`.
+de escrever a primeira linha. Para o padrão de adicionar um componente novo
+(novo `references/<grupo>/<nome>.md` + linha no índice), ver
+`skills/boost/references/CONTRIBUTING.md`.
 
 Cada skill segue o frontmatter padrão (`name`, `description`, `license`,
 `metadata.version`, `allowed-tools`) e o bloco **REQUIRED BACKGROUND** que faz
@@ -68,6 +72,6 @@ como `boost@xgodev` — ao mover o repo, o `source` lá precisa apontar para
 - `gofmt`/`goimports` não se aplicam (sem código Go aqui), mas exemplos dentro
   das skills devem compilar conceitualmente e seguir as Iron Laws do boost.
 - Documentação é parte da tarefa: mudou comportamento de um componente →
-  atualizar a skill `boost-*` e, se preciso, o README.
+  atualizar o `references/*.md` correspondente e, se preciso, o README.
 - Para o fluxo de contribuição (issue, branch, PR) ver
   [`docs/development/gitflow.md` no boost](https://github.com/xgodev/boost/blob/main/docs/development/gitflow.md).
