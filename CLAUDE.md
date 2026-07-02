@@ -9,8 +9,7 @@ in [`xgodev/boost`](https://github.com/xgodev/boost).
   plugin.json        # golang-boost manifest + quality-gate dependency
   marketplace.json   # marketplace "xgodev-boost", source "./"
 skills/
-  boost/              # entry skill: flat index (SKILL.md) + references/*.md per component
-  gqlgen-field-resolvers/
+  boost/              # entry skill: grouped index (SKILL.md) + references/*.md, factory split by domain
 ```
 
 ## Iron Laws — NUNCA violar
