@@ -32,6 +32,16 @@ The middleware order arguments here mirror the order semantics from `references/
 
 **Don't use** when the canonical `function.New + fn.Run` works — `fn.Run` already calls this internally with the right arguments.
 
+## Observability / resilience plugins for this chain
+
+These are separate `AnyErrorMiddleware`/`AnyMiddleware`/`ErrorMiddleware` implementations you add as extra arguments to `NewAnyErrorWrapper` (or the `Any`/`Error` variants) — not the per-factory `plugins ...Plugin` pattern used by `factory/*` constructors, a different plugin system with the same name:
+
+| Vendor | Import | Usage |
+|---|---|---|
+| Hystrix (circuit breaker) | `.../extra/middleware/plugins/contrib/afex/hystrix-go/v0` | `middleware.NewAnyErrorWrapper(ctx, "name", hystrix.NewAnyErrorMiddleware(ctx, "circuit-name"))` |
+| Datadog | `.../extra/middleware/plugins/contrib/datadog/dd-trace-go/v1` | `middleware.NewAnyErrorWrapper(ctx, "name", datadog.NewAnyErrorMiddleware(ctx, "span-name", "web"))` |
+| Prometheus | `.../extra/middleware/plugins/contrib/prometheus/client_golang/v1` | `middleware.NewAnyErrorWrapper(ctx, "name", prometheus.NewAnyErrorMiddleware(ctx))` |
+
 ## Red flags
 
 | Red flag | Fix |

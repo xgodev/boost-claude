@@ -23,6 +23,16 @@ defer conn.Close(ctx)
 
 Configure via `boost.factory.mongo.*` (override `BOOST_FACTORY_MONGO_*`). Multi-database: `mongofact.ConfigAdd("boost.factory.mongo.<name>")` per logical DB + `NewConnWithConfigPath`.
 
+## Observability plugins
+
+Same plugin set on both v1 and v2 (swap the import's version segment):
+
+| Vendor | Import | Usage |
+|---|---|---|
+| Datadog | `.../factory/contrib/go.mongodb.org/mongo-driver/v2/plugins/contrib/datadog/dd-trace-go/v1` | `mongofact.NewConn(ctx, datadog.NewDatadog().Register)` |
+| OpenTelemetry | `.../factory/contrib/go.mongodb.org/mongo-driver/v2/plugins/contrib/go.opentelemetry.io/contrib/v0` | `..., contrib.NewOtelMongo().Register)` |
+| Prometheus | `.../factory/contrib/go.mongodb.org/mongo-driver/v2/plugins/contrib/prometheus/client_golang/v1` | `..., prometheus.NewPrometheus().Register)` |
+
 ## Red flags
 
 | Red flag | Fix |

@@ -20,7 +20,16 @@ ordersDB, _    := pgx.NewDBWithConfigPath(ctx, "boost.factory.pgx.orders")
 analyticsDB, _ := pgx.NewDBWithConfigPath(ctx, "boost.factory.pgx.analytics")
 ```
 
-The `plugins ...sqll.Plugin` slot accepts wrappers from `wrapper/sql` (tracing, slow-query log, metrics).
+## Observability plugins
+
+`pgx.NewDB(ctx, plugins ...Plugin)` (the `Plugin` interface lives in `factory/core/database/sql`, shared by every `database/sql`-backed factory including godror) accepts:
+
+| Vendor | Import | Usage |
+|---|---|---|
+| Datadog | `.../factory/core/database/sql/plugins/contrib/datadog/dd-trace-go/v1` | `pgx.NewDB(ctx, datadog.NewDatadog().Register)` |
+| OpenTelemetry | `.../factory/core/database/sql/plugins/contrib/xsam/otelsql/v0` | `pgx.NewDB(ctx, otelsql.NewOTel().Register)` |
+
+No Prometheus plugin exists at this shared layer.
 
 ## Red flags
 

@@ -50,6 +50,18 @@ hardcoded IP — the latter fails intermittently with
 | Pub/Sub on Redis, streaming, scripting, low-level commands | `references/factory/redis.md` (raw client) |
 | Typed cache over a value type with codec + plugins | `references/wrapper/cache.md` |
 
+## Observability plugins
+
+`redisfact.NewClient(ctx, plugins ...Plugin)` also accepts vendor plugins:
+
+| Vendor | Import | Usage |
+|---|---|---|
+| Datadog | `.../factory/contrib/redis/go-redis/v9/plugins/contrib/datadog/dd-trace-go/v1` | `redisfact.NewClient(ctx, datadog.ClientRegister)` |
+| Prometheus | `.../factory/contrib/redis/go-redis/v9/plugins/contrib/prometheus/client_golang/v1` | `redisfact.NewClient(ctx, prometheus.ClientRegister)` |
+| OpenTelemetry | `.../factory/contrib/redis/go-redis/v9/plugins/native/otel/v9` | `redisfact.NewClient(ctx, otel.ClientRegister)` |
+
+The OTel one lives under `plugins/native/`, not `plugins/contrib/`, because it delegates to go-redis's own built-in instrumentation (`redisotel.InstrumentTracing`/`InstrumentMetrics`) instead of wrapping the client — same `Register` call shape either way, just note it's not a third-party contrib wrapper like the other two.
+
 ## Red flags
 
 | Red flag | Fix |

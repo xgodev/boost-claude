@@ -85,6 +85,18 @@ srv.Shutdown(shutdownCtx) // bounded drain with FRESH ctx
 
 Use a fresh context for `Shutdown` — passing the cancelled parent makes it return immediately.
 
+## Observability plugins
+
+`echoserver.NewServer(ctx, plugins ...Plugin)` also accepts vendor plugins — if the service uses one of these vendors, add the matching plugin here, not a hand-rolled Echo middleware:
+
+| Vendor | Import | Usage |
+|---|---|---|
+| Datadog | `.../factory/contrib/labstack/echo/v4/plugins/contrib/datadog/dd-trace-go/v1` | `echoserver.NewServer(ctx, ..., datadog.Register)` (or `datadog.NewDatadog(opts...).Register`) |
+| OpenTelemetry | `.../factory/contrib/labstack/echo/v4/plugins/contrib/go.opentelemetry.io/contrib/v0` | `echoserver.NewServer(ctx, ..., otelecho.Register)` (or `NewOtelEcho(opts...).Register`) |
+| Prometheus | `.../factory/contrib/labstack/echo/v4/plugins/contrib/prometheus/client_golang/v1` | `echoserver.NewServer(ctx, ..., prometheus.Register)` (or `NewPrometheus().Register`) |
+
+Other available (non-observability) plugins live under the same `plugins/` tree: `native/bodydump`, `native/bodylimit`, `native/cors`, `native/gzip`, `contrib/bytedance/sonic` and `contrib/goccy/go-json` (JSON codec swaps), `contrib/hiko1129/echo-pprof` (profiling), `contrib/swaggo/echo-swagger` (docs UI). Same `Register` pattern as the required set above.
+
 ## Custom error → status, or ignore
 
 The handler resolves status via `model/errors.Classify`. To make a non-boost

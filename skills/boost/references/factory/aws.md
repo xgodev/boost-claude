@@ -41,6 +41,14 @@ kinesisClient := kinesis.NewClient(nativeKinesis.NewFromConfig(cfg))
 
 Each `NewClient` wraps the native `*<service>.Client` from `NewFromConfig` — build the native client first, then wrap it.
 
+## Observability plugin
+
+Only Datadog has a plugin here (no OTel, no Prometheus):
+
+| Vendor | Import | Usage |
+|---|---|---|
+| Datadog | `.../factory/contrib/aws/aws-sdk-go-v2/v1/plugins/contrib/datadog/dd-trace-go.v1` | `awsfact.NewConfigWithOptions(ctx, opts, dd.NewDatadog(opts).Register)` (constructor returns an error, check it) |
+
 ## Umbrella SDK layout (factory side only)
 
 `factory/contrib/aws/aws-sdk-go-v2/v1/client/<service>/` is where per-service convenience clients live. This grouping is **exclusive to `factory/contrib/`** because factories ship clients that share an SDK version pin. For wrapper drivers, the layout is **different** — split per service: `wrapper/publisher/driver/contrib/aws/sns/v1/`, NOT `wrapper/publisher/driver/contrib/aws/aws-sdk-go-v2/v1/sns/`. See `references/CONTRIBUTING.md`.
