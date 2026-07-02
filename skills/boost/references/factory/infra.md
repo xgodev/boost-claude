@@ -9,3 +9,4 @@ Factory cloud/infra/misc integrations. Read the linked leaf for detail.
 | K8s | `references/factory/k8s.md` |
 | Cobra | `references/factory/cobra.md` |
 | fx (factory-level) | `references/factory/fx.md` |
+| Language / i18n (x/text) | `references/factory/language.md` |

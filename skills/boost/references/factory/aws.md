@@ -23,6 +23,24 @@ sqsClient := sqs.NewFromConfig(cfg)
 
 Configure region, credentials provider, retry policy under `boost.factory.aws.*` (override `BOOST_FACTORY_AWS_*`). Standard AWS env vars (`AWS_REGION`, `AWS_PROFILE`) are honored too.
 
+## Per-service wrapper clients
+
+Instead of `<service>.NewFromConfig(cfg)` (native SDK), boost also ships thin per-service wrappers that take an already-constructed native client — use these when you want the wrapped client's boost-standard error handling on the SNS/SQS/Kinesis calls themselves:
+
+```go
+import (
+    "github.com/xgodev/boost/factory/contrib/aws/aws-sdk-go-v2/v1/client/sns"
+    "github.com/xgodev/boost/factory/contrib/aws/aws-sdk-go-v2/v1/client/sqs"
+    "github.com/xgodev/boost/factory/contrib/aws/aws-sdk-go-v2/v1/client/kinesis"
+)
+
+snsClient := sns.NewClient(nativeSNS.NewFromConfig(cfg))
+sqsClient := sqs.NewClient(nativeSQS.NewFromConfig(cfg))
+kinesisClient := kinesis.NewClient(nativeKinesis.NewFromConfig(cfg))
+```
+
+Each `NewClient` wraps the native `*<service>.Client` from `NewFromConfig` — build the native client first, then wrap it.
+
 ## Umbrella SDK layout (factory side only)
 
 `factory/contrib/aws/aws-sdk-go-v2/v1/client/<service>/` is where per-service convenience clients live. This grouping is **exclusive to `factory/contrib/`** because factories ship clients that share an SDK version pin. For wrapper drivers, the layout is **different** — split per service: `wrapper/publisher/driver/contrib/aws/sns/v1/`, NOT `wrapper/publisher/driver/contrib/aws/aws-sdk-go-v2/v1/sns/`. See `references/CONTRIBUTING.md`.

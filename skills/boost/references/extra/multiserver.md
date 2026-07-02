@@ -8,44 +8,65 @@ A single binary listening on multiple ports — for example:
 - Main API on `:8080` (Echo HTTP).
 - Prometheus scraper on `:9090` (`/metrics`).
 - Internal gRPC on `:9000`.
-- Readiness side-car on `:8081` (so the readiness port is independent of the API port).
 
-Without `multiserver`, you end up writing ad-hoc goroutine + WaitGroup orchestration per listener. `multiserver` standardizes start order, fail-fast on any listener error, and SIGTERM-driven coordinated shutdown.
+Without `multiserver`, you end up writing ad-hoc goroutine + WaitGroup orchestration per listener.
+
+## The `Server` interface
+
+Anything passed to `multiserver` must implement:
+
+```go
+type Server interface {
+    Serve(context.Context)
+    Shutdown(context.Context)
+}
+```
+
+`Serve` is the blocking server loop; `Shutdown` is the graceful drain. Adapt whatever framework you're using (Echo, gRPC, …) to this interface — it does not ship built-in adapters.
 
 ## Wiring
 
 ```go
-import (
-    "github.com/xgodev/boost/extra/multiserver"
-)
+import "github.com/xgodev/boost/extra/multiserver"
+
+type echoServer struct {
+    echo *echo.Echo
+    addr string
+}
+
+func (e *echoServer) Serve(ctx context.Context)    { e.echo.Logger.Fatal(e.echo.Start(e.addr)) }
+func (e *echoServer) Shutdown(ctx context.Context) { e.echo.Shutdown(ctx) }
+
+type grpcServer struct {
+    server *grpc.Server
+    lis    net.Listener
+}
+
+func (g *grpcServer) Serve(ctx context.Context)    { g.server.Serve(g.lis) }
+func (g *grpcServer) Shutdown(ctx context.Context) { g.server.GracefulStop() }
 
 ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 defer cancel()
 
-ms := multiserver.New(
-    multiserver.WithServer("api",     apiSrv),       // primary HTTP
-    multiserver.WithServer("metrics", metricsSrv),   // Prometheus
-    multiserver.WithServer("grpc",    grpcSrv),      // gRPC
-)
-
-if err := ms.Run(ctx); err != nil {
-    log.FromContext(ctx).WithError(err).Fatal("multiserver exited with error")
-}
+multiserver.Serve(ctx, &echoServer{echo: e, addr: ":8080"}, &grpcServer{server: gs, lis: lis})
 ```
 
-`ms.Run(ctx)` blocks until ctx is cancelled OR any registered server returns a fatal error. On exit, every server's `Shutdown` is called with a bounded drain context.
+`Serve(ctx, srvs...)` panics if called with zero servers. For one server it blocks directly; for several it launches each in its own goroutine and waits for all to complete.
 
-## Failure semantics
+## Check and Shutdown
 
-- If any listener fails to bind at startup → all servers stop, `Run` returns the error.
-- If a listener panics or returns mid-flight → coordinated drain (the rest get a chance to finish in-flight requests before exit).
-- SIGTERM on the parent ctx → bounded drain across all listeners in parallel.
+```go
+func Check(ctx context.Context) error     // nil if every registered server reports Ok; else a ServiceUnavailable error
+func Shutdown(ctx context.Context)        // calls Shutdown(ctx) on every registered server; panics if none are configured
+```
+
+`Check` is what you'd wire into a readiness checker (see `references/extra/health.md`) to fail readiness if one of the multiplexed servers went down without crashing the process.
 
 ## Red flags
 
 | Red flag | Fix |
 |---|---|
-| Hand-rolled `sync.WaitGroup` + N `go server.Serve` calls | Use `multiserver.New` so failure semantics are uniform |
-| Forgetting to Shutdown one of the listeners on signal | Let `multiserver` drive shutdown for all of them |
-| Different drain timeouts per listener | Set one drain timeout on the multiserver options; consistency beats micro-tuning here |
-| Mixing `multiserver` with manual `srv.Serve` for one of the servers | All listeners under `multiserver` or none — the failure-fast guarantee depends on it |
+| Hand-rolled `sync.WaitGroup` + N `go server.Serve` calls | Use `multiserver.Serve(ctx, srvs...)` so failure semantics are uniform |
+| A server type that doesn't implement both `Serve(context.Context)` and `Shutdown(context.Context)` | Add an adapter type wrapping the underlying server/framework |
+| Calling `multiserver.New()` / `.WithServer()` / `ms.Run(ctx)` | That builder API doesn't exist — the real entry points are the package-level `Serve`, `Check`, `Shutdown` functions |
+| Forgetting to wire `Shutdown` to the process signal context | Pass a `signal.NotifyContext` into `Serve` so SIGTERM drains every listener |
