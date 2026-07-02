@@ -7,7 +7,7 @@ in [`xgodev/boost`](https://github.com/xgodev/boost).
 ```
 .claude-plugin/
   plugin.json        # golang-boost manifest + quality-gate dependency
-  marketplace.json   # marketplace "xgodev-boost", source "./"
+  marketplace.json   # marketplace "xgodev-plugins", source "./"
 skills/
   boost/              # entry skill: grouped index (SKILL.md) + references/*.md, factory split by domain
 ```
@@ -29,7 +29,8 @@ skills/
    do plugin em `.claude-plugin/marketplace.json`. Sem bump, o auto-update não
    reconhece a mudança.
 4. **Nomes são contrato.** `name` do plugin (`golang-boost`) e `name` do
-   marketplace (`xgodev-boost`) não mudam sem migração documentada — quebram
+   marketplace (`xgodev-plugins`, renomeado de `xgodev-boost` — ver seção de
+   migração no README) não mudam sem migração documentada — quebram
    `/plugin install` e referências externas (umbrella `xgodev/claude-plugin`).
 5. **`source: "./"`** no `marketplace.json` — a raiz deste repo é o plugin.
 
@@ -38,7 +39,7 @@ skills/
 - Componente do boost alterado sem o `references/*.md` correspondente atualizado aqui, ou sem entrada no índice de `skills/boost/SKILL.md`
 - Mudança de skill/manifest sem bump de versão
 - `SKILL.md` referenciando caminho de arquivo local em vez de import path Go
-- Rename de `golang-boost` / `xgodev-boost` sem nota de migração
+- Rename de `golang-boost` / `xgodev-plugins` sem nota de migração
 
 ## Editar/criar skills
 
@@ -56,15 +57,16 @@ cross-reference entre skills (carrega só o necessário).
 
 ```
 /plugin marketplace add xgodev/boost-claude
-/plugin install golang-boost@xgodev-boost
+/plugin install golang-boost@xgodev-plugins
 ```
 
 Dependência puxada automaticamente: `quality-gate@xgodev-quality-gate`
 (pré-requisito: `/plugin marketplace add xgodev/quality-gate` antes do install).
 
 O umbrella `xgodev/claude-plugin` (marketplace `xgodev`) re-lista este plugin
-como `boost@xgodev` — ao mover o repo, o `source` lá precisa apontar para
-`xgodev/boost-claude`. Esse ajuste é em outro repo, fora daqui.
+como `boost@xgodev` — ao mover o repo OU renomear o marketplace (como neste
+PR, `xgodev-boost` → `xgodev-plugins`), o `source`/nome referenciado lá
+precisa ser atualizado. Esse ajuste é em outro repo, fora daqui.
 
 ## Regras gerais
 
