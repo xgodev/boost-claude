@@ -1,6 +1,6 @@
 {
   "name": "golang-boost",
-  "version": "0.13.0",
+  "version": "0.16.0",
   "description": "Single-entry, grouped-index Claude Code skill for github.com/xgodev/boost. skills/boost/SKILL.md lists 8 top-level contexts (boot sequence, model/errors, contributing, wrapper, bootstrap, extra, fx, factory); wrapper/bootstrap/extra/fx/factory each expand into their own context file, and factory further splits into 5 domain files (database, messaging, http, observability, infra) before reaching a per-component leaf. Only the small top-level SKILL.md loads on every trigger — every deeper file loads only when the question actually needs it.",
   "author": {
     "name": "João Paulo Faria",

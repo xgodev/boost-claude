@@ -15,11 +15,11 @@ every deeper file loads on demand only when the question actually needs it.
 
 ```
 /plugin marketplace add xgodev/boost-claude
-/plugin install golang-boost@xgodev-boost
+/plugin install golang-boost@xgodev-plugins
 ```
 
-The marketplace is named `xgodev-boost` and the plugin is `golang-boost` — only
-the `marketplace add` URL points here.
+The marketplace is named `xgodev-plugins` and the plugin is `golang-boost` —
+only the `marketplace add` URL points here.
 
 ### Dependency
 
@@ -31,16 +31,31 @@ the dependency as unsatisfied and disables the plugin:
 /plugin marketplace add xgodev/quality-gate
 ```
 
-## Migrating from `xgodev/boost`
+## Migrating from the `xgodev-boost` marketplace name
 
-The plugin used to be distributed from the `xgodev/boost` repository itself.
-If you installed it the old way, remove it and re-add from here:
+The marketplace inside this same repo used to be named `xgodev-boost`; it is
+now `xgodev-plugins`. The repo and the `golang-boost` plugin name are
+unchanged — only the marketplace's own `name` field moved. If you installed
+under the old name, remove it and re-add:
 
 ```
 /plugin uninstall golang-boost@xgodev-boost
 /plugin marketplace remove xgodev-boost
 /plugin marketplace add xgodev/boost-claude
-/plugin install golang-boost@xgodev-boost
+/plugin install golang-boost@xgodev-plugins
+```
+
+## Migrating from `xgodev/boost`
+
+The plugin used to be distributed from the `xgodev/boost` repository itself.
+If you installed it that old way (not just under the old marketplace name
+above), remove it and re-add from here:
+
+```
+/plugin uninstall golang-boost@xgodev-boost
+/plugin marketplace remove xgodev-boost
+/plugin marketplace add xgodev/boost-claude
+/plugin install golang-boost@xgodev-plugins
 ```
 
 ## What's inside
@@ -48,7 +63,7 @@ If you installed it the old way, remove it and re-add from here:
 ```
 .claude-plugin/
   plugin.json                # golang-boost manifest + quality-gate dependency
-  marketplace.json           # marketplace "xgodev-boost", source "./"
+  marketplace.json           # marketplace "xgodev-plugins", source "./"
 skills/
   boost/
     SKILL.md                 # entry skill: 8 top-level contexts, ~25 lines
