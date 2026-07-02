@@ -20,5 +20,3 @@ Index for `github.com/xgodev/boost`. Read the matching context row below, then t
 | Extra (health/middleware/multiserver) | `references/extra.md` |
 | fx modules | `references/fx.md` |
 | Factory (`factory/contrib/*`, every integration) | `references/factory.md` |
-
-`gqlgen-field-resolvers` is a separate skill, not covered here — it documents `99designs/gqlgen`, not `xgodev/boost`.
