@@ -43,7 +43,11 @@ Both client and server constructors accept `plugins ...Plugin` — the vendor co
 | Prometheus | `.../client/plugins/contrib/prometheus/client_golang/v1` → `..., prometheus.NewPrometheus().Register)` | `.../server/plugins/contrib/prometheus/client_golang/v1` → `..., prometheus.NewPrometheus().Register)` |
 | OpenTelemetry | `.../client/plugins/contrib/go.opentelemetry.io/contrib/v0` → `..., contrib.NewOpenTelemetry().Register)` | **not available** — no otel plugin ships for the gRPC server side |
 
-Also client-only, non-observability: `plugins/native/compressor`. Same on the server side: `plugins/native/compressor`.
+## Other plugins
+
+| Plugin | Client | Server | What it does |
+|---|---|---|---|
+| Compressor | `.../client/plugins/native/compressor` → `client.NewClientConnWithOptions(ctx, opts, compressor.NewCompressor().Register)` | `.../server/plugins/native/compressor` → `server.NewServerWithOptions(ctx, opts, compressor.NewCompressor().Register)` | Enables gzip compression for gRPC payloads |
 
 ## Red flags
 

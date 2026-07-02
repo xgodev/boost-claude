@@ -1,6 +1,6 @@
-**When the user names an observability vendor (OpenTelemetry, Datadog, Prometheus) or asks to add tracing/metrics, check this table for every boost component the service actually uses** — most factory constructors accept a variadic `plugins ...Plugin` argument, and coverage is per-component, not automatic. Activating OTel for the service does not activate it for every library; each row below is a separate opt-in.
+Most factory constructors accept a variadic `plugins ...Plugin` argument, and each factory's own reference file lists everything it supports — not just observability. Echo alone has body-dump/limit, CORS, gzip, two JSON-codec swaps, pprof, Swagger UI, and a semaphore, in addition to Datadog/OTel/Prometheus; Resty has request-ID and retry; gRPC has a compressor. **Whenever the task wires or configures a factory, read that factory's own "Plugins" section — don't assume the required/default plugin set shown in its main example is the complete list.**
 
-This is the cross-cutting index — each row's own reference file has the exact import path and constructor for that component.
+This file is the narrower cross-cutting index specifically for observability vendors: **when the user names OpenTelemetry, Datadog, or Prometheus, or asks to add tracing/metrics, check this table for every boost component the service actually uses** — coverage is per-component, not automatic. Activating OTel for the service does not activate it for every library; each row below is a separate opt-in. For non-observability plugins (JSON codecs, compression, retry, profiling, docs UI, …), go straight to the component's own reference file instead of this matrix.
 
 | Component | Datadog | OpenTelemetry | Prometheus | Reference |
 |---|---|---|---|---|

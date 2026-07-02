@@ -41,6 +41,7 @@ These are separate `AnyErrorMiddleware`/`AnyMiddleware`/`ErrorMiddleware` implem
 | Hystrix (circuit breaker) | `.../extra/middleware/plugins/contrib/afex/hystrix-go/v0` | `middleware.NewAnyErrorWrapper(ctx, "name", hystrix.NewAnyErrorMiddleware(ctx, "circuit-name"))` |
 | Datadog | `.../extra/middleware/plugins/contrib/datadog/dd-trace-go/v1` | `middleware.NewAnyErrorWrapper(ctx, "name", datadog.NewAnyErrorMiddleware(ctx, "span-name", "web"))` |
 | Prometheus | `.../extra/middleware/plugins/contrib/prometheus/client_golang/v1` | `middleware.NewAnyErrorWrapper(ctx, "name", prometheus.NewAnyErrorMiddleware(ctx))` |
+| Fallback (no-op passthrough) | `.../extra/middleware/plugins/native/fallback` | `middleware.NewAnyErrorWrapper(ctx, "name", fallback.NewAnyErrorMiddleware[Result]())` — a stub middleware that delegates unchanged; useful as a placeholder slot in a chain built conditionally |
 
 ## Red flags
 

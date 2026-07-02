@@ -51,7 +51,12 @@ The constructors also accept `plugins ...Plugin` — if the service uses one of 
 | OpenTelemetry | `.../factory/contrib/go-resty/resty/v2/plugins/contrib/dubonzi/otelresty/v1` | `..., otel.NewOtelresty(opts...).Register)` |
 | Prometheus | `.../factory/contrib/go-resty/resty/v2/plugins/contrib/prometheus/client_golang/v1` | `..., prom.NewPrometheusWithOptions(opts).Register)` |
 
-Also available, non-observability: `plugins/extra/requestid`, `plugins/extra/retry`.
+## Other plugins
+
+| Plugin | Import | Usage | What it does |
+|---|---|---|---|
+| Request ID | `.../factory/contrib/go-resty/resty/v2/plugins/extra/requestid` | `resty.NewClientWithConfigPath(ctx, path, reqid.NewRequestID().Register)` | Injects `X-Request-ID` into every outbound request |
+| Retry | `.../factory/contrib/go-resty/resty/v2/plugins/extra/retry` | `..., retry.NewRetry().Register)` | Exponential backoff retry on 429/5xx/timeout |
 
 ## Red flags
 
