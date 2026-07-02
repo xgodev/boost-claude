@@ -14,6 +14,7 @@ Index for `github.com/xgodev/boost`. Read the matching context row below, then t
 |---|---|
 | Boot sequence (`boost.Start()`) | `references/start.md` |
 | Typed error catalog (`model/errors`) | `references/model-errors.md` |
+| REST response envelope (`model/restresponse`) | `references/model-restresponse.md` |
 | Contributing a new component | `references/CONTRIBUTING.md` |
 | Wrapper (log/config/cache/publisher) | `references/wrapper.md` |
 | Bootstrap (function/middleware/adapters) | `references/bootstrap.md` |
